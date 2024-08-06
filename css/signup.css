@@ -3,6 +3,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: "Outfit";
+    
   }
   
   .banner {
@@ -91,6 +92,8 @@
   
   .banner .box1 #nim:focus {
     outline: none;
+    
+
   }
   
   .banner .box1 #pass {

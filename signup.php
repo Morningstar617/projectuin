@@ -1,3 +1,51 @@
+<?php
+require 'conection.php';
+
+if (isset($_POST['register'])) {
+    $username = $_POST['nama'];
+    $nim = $_POST['nim'];
+    $password = $_POST['pass'];
+    $prodi = $_POST['prodi'];
+    $email = $_POST['email'];
+    
+    // Menyiapkan query untuk memeriksa apakah NIM atau email sudah ada
+    $query = "SELECT * FROM mahasiswa WHERE id_mahasiswa = ? ^ email = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "ss", $nim, $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (mysqli_num_rows($result) > 0) {
+        // Menampilkan alert jika NIM atau email sudah ada
+        echo "<script>alert('NIM atau email sudah terdaftar!');</script>";
+    } else {
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+        // Menyiapkan query untuk memasukkan data baru
+        $query = "INSERT INTO mahasiswa (id_mahasiswa, nama_mahasiswa, id_prodi, password, email) VALUES (?, ?, ?, ?, ?)";
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, "sssss", $nim, $username, $prodi, $password_hash, $email);
+
+        if (mysqli_stmt_execute($stmt)) {
+            // Redirect ke halaman home.php setelah registrasi berhasil
+            header('Location: home.php');
+            exit;
+        } else {
+            $error = mysqli_error($conn);
+            // Menampilkan alert jika registrasi gagal
+            echo "<script>alert('Registrasi gagal: $error'); </script>";
+        }
+    }
+
+    // Menutup prepared statement dan koneksi
+    mysqli_stmt_close($stmt);
+    mysqli_close($conn);
+}
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,7 +70,7 @@
                     <i class='bx bxs-user'></i>
                 </div>
                 <div class="form2">
-                    <input type="text" name="nim" id="nim" required placeholder="NIM" />
+                    <input type="text" name="nim" id="nim"  required placeholder="NIM" oninput="filterInput(this)"  />
                     <i class="bx bxs-key"></i>
                 </div>
                 <div class="form3">
@@ -30,7 +78,7 @@
                     <i class="bx bxs-lock-alt"></i>
                 </div>
                 <div class="form4">
-                    <input type="text" name="prodi" id="prodi" required placeholder="Prodi" />
+                    <input type="text" name="prodi" id="prodi" required placeholder="Id Prodi" />
                     <i class='bx bxs-graduation'></i>
                 </div>
                 <div class="form5">
@@ -53,6 +101,13 @@
             <p>pinjamaja.</p>
         </div>
     </div>
+
+
+    <script>
+        function filterInput(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+        }
+    </script>
 </body>
 
 </html>
