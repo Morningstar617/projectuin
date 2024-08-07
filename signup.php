@@ -8,36 +8,29 @@ if (isset($_POST['register'])) {
     $prodi = $_POST['prodi'];
     $email = $_POST['email'];
     
-    // Menyiapkan query untuk memeriksa apakah NIM atau email sudah ada
-    $query = "SELECT * FROM mahasiswa WHERE id_mahasiswa = ? ^ email = ?";
+    $query = "SELECT * FROM mahasiswa WHERE id_mahasiswa = ? or email = ?";
     $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, "ss", $nim, $email);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
 
     if (mysqli_num_rows($result) > 0) {
-        // Menampilkan alert jika NIM atau email sudah ada
         echo "<script>alert('NIM atau email sudah terdaftar!');</script>";
     } else {
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-        // Menyiapkan query untuk memasukkan data baru
         $query = "INSERT INTO mahasiswa (id_mahasiswa, nama_mahasiswa, id_prodi, password, email) VALUES (?, ?, ?, ?, ?)";
         $stmt = mysqli_prepare($conn, $query);
         mysqli_stmt_bind_param($stmt, "sssss", $nim, $username, $prodi, $password_hash, $email);
 
         if (mysqli_stmt_execute($stmt)) {
-            // Redirect ke halaman home.php setelah registrasi berhasil
             header('Location: home.php');
             exit;
         } else {
             $error = mysqli_error($conn);
-            // Menampilkan alert jika registrasi gagal
             echo "<script>alert('Registrasi gagal: $error'); </script>";
         }
     }
-
-    // Menutup prepared statement dan koneksi
     mysqli_stmt_close($stmt);
     mysqli_close($conn);
 }
@@ -78,7 +71,7 @@ if (isset($_POST['register'])) {
                     <i class="bx bxs-lock-alt"></i>
                 </div>
                 <div class="form4">
-                    <input type="text" name="prodi" id="prodi" required placeholder="Id Prodi" />
+                    <input type="text" name="prodi" id="prodi" required placeholder="Prodi" />
                     <i class='bx bxs-graduation'></i>
                 </div>
                 <div class="form5">
@@ -98,7 +91,7 @@ if (isset($_POST['register'])) {
         </div>
         <div class="box2">
             <img src="img/logo uin.png" />
-            <p>pinjamaja.</p>
+            <p>pinjamin.</p>
         </div>
     </div>
 

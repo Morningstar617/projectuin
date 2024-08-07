@@ -1,3 +1,34 @@
+<?php
+require "conection.php";
+
+if (isset($_POST['login'])) {
+  $nim = $_POST['nim'];
+  $password = $_POST['pass'];
+
+  $query = "SELECT * FROM mahasiswa WHERE id_mahasiswa = ?";
+  $stmt = $conn->prepare($query);
+  $stmt->bind_param("s", $nim);
+  $stmt->execute();
+  $result = $stmt->get_result();
+
+  if ($result->num_rows > 0) {
+    $user_data = $result->fetch_assoc();
+    $hashed_password = $user_data['password'];
+
+    if (password_verify($password, $hashed_password)) {
+      header('Location: home.php');
+      exit;
+    } else {
+      $err = "<script>alert('PASSWORD SALAH'); </script>";
+    }
+  } else {
+    $err = "<script>alert('AKUN TIDAK DITEMUKAN'); </script>";
+  }
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -36,9 +67,14 @@
     </div>
     <div class="box2">
       <img src="img/logo uin.png" />
-      <p>pinjamaja.</p>
+      <p>pinjamin.</p>
     </div>
   </div>
+
+  <?php if (isset($err)) { ?>
+    <p style="color: blue;"><?php echo $err; ?></p>
+  <?php } ?>
+
 </body>
 
 </html>

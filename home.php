@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>iki home COK</h1>
+    <h1>iki home </h1>
     
 </body>
 </html>
